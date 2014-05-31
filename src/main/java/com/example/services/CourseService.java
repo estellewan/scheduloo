@@ -2,21 +2,12 @@ package com.example.services;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Time;
-import java.util.TimeZone;
+import java.sql.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import com.example.models.Course;
 
 @Path("/course")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,9 +18,9 @@ public class CourseService {
 
 	    String username = dbUri.getUserInfo().split(":")[0];
 	    String password = dbUri.getUserInfo().split(":")[1];
-	    String dbUrl = "jdbc:postgres://xczctfsrvdfdev:4E1-Aqk-r8X_sw46AB3eMXzxNx@ec2-54-225-182-133.compute-1.amazonaws.com:5432/d62p1gkdb00cq";
-
-	    return DriverManager.getConnection(dbUrl, username, password);
+	    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+	   
+	    return DriverManager.getConnection("jdbc:postgresql://ec2-54-225-182-133.compute-1.amazonaws.com:5432/d62p1gkdb00cq?user=xczctfsrvdfdev&password=4E1-Aqk-r8X_sw46AB3eMXzxNx&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory");
 	}
 	
     @GET
@@ -46,11 +37,13 @@ public class CourseService {
 		}
         
         Statement stmt = null;
+        System.out.println("Read from DB: ");
 		try {
 			stmt = connection.createStatement();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			 
 		}
         ResultSet rs = null;
 		try {
