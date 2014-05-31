@@ -27,7 +27,7 @@ public class CourseService {
 
 	    String username = dbUri.getUserInfo().split(":")[0];
 	    String password = dbUri.getUserInfo().split(":")[1];
-	    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+	    String dbUrl = "jdbc:postgres://xczctfsrvdfdev:4E1-Aqk-r8X_sw46AB3eMXzxNx@ec2-54-225-182-133.compute-1.amazonaws.com:5432/d62p1gkdb00cq";
 
 	    return DriverManager.getConnection(dbUrl, username, password);
 	}
