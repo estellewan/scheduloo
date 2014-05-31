@@ -6,19 +6,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Course {
 
     private int id;
-    private final int subject_code;
-    private final int subject_catalog;
+    private final String subject_code;
+    private final String subject_catalog;
 
-    public Course(int subject_code, int subject_catalog) {
+    public Course(String subject_code, String subject_catalog) {
         this.subject_code = subject_code;
         this.subject_catalog = subject_catalog;
     }
 
-    public int getSubjectCode() {
+    public String getSubjectCode() {
         return subject_code;
     }
 
-    public int getSubjectCatalog() {
+    public String getSubjectCatalog() {
         return subject_catalog;
     }
 }

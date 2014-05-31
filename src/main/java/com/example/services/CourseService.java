@@ -2,60 +2,50 @@ package com.example.services;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.example.models.Course;
+
 @Path("/course")
 @Produces(MediaType.APPLICATION_JSON)
 public class CourseService {
 
-	private static Connection getConnection() throws URISyntaxException, SQLException {
+	private static Connection getConnection() throws URISyntaxException, SQLException, ClassNotFoundException {
 	    URI dbUri = new URI(System.getenv("DATABASE_URL"));
+	    Class.forName("org.postgresql.Driver");
 
 	    String username = dbUri.getUserInfo().split(":")[0];
 	    String password = dbUri.getUserInfo().split(":")[1];
 	    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
-	   
-	    return DriverManager.getConnection("jdbc:postgresql://ec2-54-225-182-133.compute-1.amazonaws.com:5432/d62p1gkdb00cq?user=xczctfsrvdfdev&password=4E1-Aqk-r8X_sw46AB3eMXzxNx&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory");
+
+	    return DriverManager.getConnection(dbUrl+"?user="+username+"&password="+password+"&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory");
 	}
 	
     @GET
-    public ResultSet get() {
-    	Connection connection = null;
-		try {
-			connection = getConnection();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    public ArrayList<Course> get() throws ClassNotFoundException, SQLException, URISyntaxException {
+    	Connection connection = getConnection();
         
-        Statement stmt = null;
-        System.out.println("Read from DB: ");
-		try {
-			stmt = connection.createStatement();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			 
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT * FROM courses");
+		
+		ArrayList<Course> courseList = new ArrayList<Course>();
+		Course course = null;
+		while (rs.next()) {
+			course = new Course(rs.getString("subject_code"), rs.getString("subject_catalog"));
+			courseList.add(course);
 		}
-        ResultSet rs = null;
-		try {
-			rs = stmt.executeQuery("SELECT * FROM courses");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        //while (rs.next()) {
-            //System.out.println("Read from DB: " + rs.getTimestamp("tick"));
-        //}
-        return rs;
+        return courseList;
     }
 }
 
