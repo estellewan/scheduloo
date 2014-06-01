@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -17,7 +19,6 @@ import javax.ws.rs.core.MediaType;
 import com.example.models.Course;
 
 @Path("/course")
-@Produces(MediaType.APPLICATION_JSON)
 public class CourseService {
 
 	private static Connection getConnection() throws URISyntaxException, SQLException, ClassNotFoundException {
@@ -28,6 +29,7 @@ public class CourseService {
 	}
 	
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Course> get() throws ClassNotFoundException, SQLException, URISyntaxException {
     	Connection connection = getConnection();
         
@@ -38,10 +40,24 @@ public class CourseService {
 		ArrayList<Course> courseList = new ArrayList<Course>();
 		Course course = null;
 		while (rs.next()) {
-			course = new Course(rs.getString("subject_code"), rs.getString("subject_catalog"));
+			course = new Course(rs.getInt("id"), rs.getString("subject_code"), rs.getString("subject_catalog"), rs.getString("section"));
 			courseList.add(course);
 		}
         return courseList;
+    }
+    
+    @POST
+    @Path("/add")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void add(Course course) throws SQLException, ClassNotFoundException, URISyntaxException {
+    	Connection connection = getConnection();
+        
+        Statement stmt = connection.createStatement();
+
+        String msql = "INSERT INTO courses "+
+        		"(id,subject_code, subject_catalog, section) "+
+        		"VALUES ("+course.getId()+",'"+course.getSubjectCode()+"','"+course.getSubjectCatalog()+"','"+course.getSection()+"')";
+        stmt.executeUpdate(msql);
     }
 }
 
