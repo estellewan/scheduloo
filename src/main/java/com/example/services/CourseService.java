@@ -21,14 +21,10 @@ import com.example.models.Course;
 public class CourseService {
 
 	private static Connection getConnection() throws URISyntaxException, SQLException, ClassNotFoundException {
-	    URI dbUri = new URI(System.getenv("DATABASE_URL"));
-	    Class.forName("org.postgresql.Driver");
+	    Class.forName("com.mysql.jdbc.Driver");
 
-	    String username = dbUri.getUserInfo().split(":")[0];
-	    String password = dbUri.getUserInfo().split(":")[1];
-	    String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
-
-	    return DriverManager.getConnection(dbUrl+"?user="+username+"&password="+password+"&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory");
+	    return DriverManager.getConnection("jdbc:mysql://cs446.cpr3v5unvsxc.us-east-1.rds.amazonaws.com:3306/cs446?"+ 
+	    		"user=cs446&password=estellay");
 	}
 	
     @GET
