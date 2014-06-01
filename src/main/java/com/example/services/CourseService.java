@@ -1,6 +1,5 @@
 package com.example.services;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,28 +20,27 @@ import com.example.models.Course;
 @Path("/course")
 public class CourseService {
 
-	private static Connection getConnection() throws URISyntaxException, SQLException, ClassNotFoundException {
-	    Class.forName("com.mysql.jdbc.Driver");
+    private static Connection getConnection() throws URISyntaxException, SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.jdbc.Driver");
 
-	    return DriverManager.getConnection("jdbc:mysql://cs446.cpr3v5unvsxc.us-east-1.rds.amazonaws.com:3306/cs446?"+ 
-	    		"user=cs446&password=estellay");
-	}
+        return DriverManager.getConnection("jdbc:mysql://cs446.cpr3v5unvsxc.us-east-1.rds.amazonaws.com:3306/cs446?"+ 
+            "user=cs446&password=estellay");
+    }
 	
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Course> get() throws ClassNotFoundException, SQLException, URISyntaxException {
-    	Connection connection = getConnection();
+        Connection connection = getConnection();
         
         Statement stmt = connection.createStatement();
 
         ResultSet rs = stmt.executeQuery("SELECT * FROM courses");
-		
-		ArrayList<Course> courseList = new ArrayList<Course>();
-		Course course = null;
-		while (rs.next()) {
-			course = new Course(rs.getInt("id"), rs.getString("subject_code"), rs.getString("subject_catalog"), rs.getString("section"));
-			courseList.add(course);
-		}
+        ArrayList<Course> courseList = new ArrayList<Course>();
+        Course course = null;
+        while (rs.next()) {
+            course = new Course(rs.getInt("id"), rs.getString("subject_code"), rs.getString("subject_catalog"), rs.getString("section"));
+            courseList.add(course);
+        }
         return courseList;
     }
     
