@@ -20,6 +20,8 @@ GET: Fetch list of all registered courses:
 
 POST: Add a course to database:
 
+    http://secret-oasis-8161.herokuapp.com/services/course/add
+
     1. Easier way to test this is to get a REST API Client e.g. RESTClient add-on for FireFox (https://addons.mozilla.org/en-US/firefox/addon/restclient/)
 
     2. Message body: {"id":"2001", "subjectCode":"AMATH","subjectCatalog":"332","section":"LEC 001"}
