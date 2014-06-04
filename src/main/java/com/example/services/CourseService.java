@@ -41,6 +41,11 @@ public class CourseService {
             course = new Course(rs.getInt("id"), rs.getString("subject_code"), rs.getString("subject_catalog"), rs.getString("section"));
             courseList.add(course);
         }
+        
+        rs.close();
+        stmt.close();
+        connection.close();
+        
         return courseList;
     }
     
@@ -56,6 +61,9 @@ public class CourseService {
         		"(id,subject_code, subject_catalog, section) "+
         		"VALUES ("+course.getId()+",'"+course.getSubjectCode()+"','"+course.getSubjectCatalog()+"','"+course.getSection()+"')";
         stmt.executeUpdate(msql);
+        
+        stmt.close();
+        connection.close();
     }
 }
 
