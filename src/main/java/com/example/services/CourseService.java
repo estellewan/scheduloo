@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.example.models.Course;
+import com.example.models.CourseUser;
 
 @Path("/course")
 public class CourseService {
@@ -75,6 +76,27 @@ public class CourseService {
         connection.close();
         
         return courseList;
+    }
+    
+    /**
+     * Saves a course associated with a particular user
+     * @param courseUser
+     */
+    @POST
+    @Path("/add-course-user")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void addCourseWithUser(CourseUser courseUser) throws SQLException, ClassNotFoundException, URISyntaxException {
+        Connection connection = getConnection();
+        
+        Statement stmt = connection.createStatement();
+
+        String msql = "INSERT INTO course_user "+
+                "(course_id, user_id) "+
+                "VALUES ("+courseUser.getCourseId()+",'"+courseUser.getUserId()+"')";
+        stmt.executeUpdate(msql);
+        
+        stmt.close();
+        connection.close();
     }
     
     @POST
