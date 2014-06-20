@@ -12,6 +12,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -19,7 +20,7 @@ import com.example.models.Course;
 
 @Path("/course")
 public class CourseService {
-
+   
     private static Connection getConnection() throws URISyntaxException, SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
 
@@ -40,6 +41,33 @@ public class CourseService {
         while (rs.next()) {
             course = new Course(rs.getInt("id"), rs.getString("subject_code"), rs.getString("subject_catalog"), rs.getString("section"));
             courseList.add(course);
+        }
+        
+        rs.close();
+        stmt.close();
+        connection.close();
+        
+        return courseList;
+    }
+    
+    /**
+     * @param user_id
+     * @return list of class ids enrolled in by user_id
+     */
+    @GET
+    @Path("/{user_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<Integer> getCourseByUser(@PathParam("user_id") String user_id) throws ClassNotFoundException, SQLException, URISyntaxException {
+        Connection connection = getConnection();
+        
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT * FROM course_user WHERE user_id="+user_id);
+        
+        ArrayList<Integer> courseList = new ArrayList<Integer>();
+        
+        while (rs.next()) {
+            courseList.add(rs.getInt("course_id"));
         }
         
         rs.close();
