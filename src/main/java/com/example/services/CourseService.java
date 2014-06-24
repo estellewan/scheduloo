@@ -23,10 +23,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.example.models.Course;
@@ -236,9 +235,8 @@ public class CourseService {
         return arr;
     }
 
-    @SuppressWarnings("deprecation")
     private JSONObject getJSONFromAPIUrlAsJSONObject(String url) throws Exception {
-        HttpClient client = new DefaultHttpClient(); 
+        HttpClient client = HttpClientBuilder.create().build();
         HttpResponse responseGet = client.execute(new HttpGet(url));
         HttpEntity resEntityGet = responseGet.getEntity();
         
