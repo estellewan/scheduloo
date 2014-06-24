@@ -90,6 +90,21 @@ public class CourseService {
         
         Statement stmt = connection.createStatement();
 
+        // Check if we are adding a class which has already been added
+        ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM course_user "+
+                "WHERE course_id="+courseUser.getCourseId()+" AND user_id="+courseUser.getUserId());
+        
+        rs.next();
+        int count = rs.getInt("rowcount");
+        rs.close();
+        
+        // Count the number of records with same course id and user id
+        if (count > 0) {
+            stmt.close();
+            connection.close();
+            throw new SQLException();
+        }
+
         String msql = "INSERT INTO course_user "+
                 "(course_id, user_id) "+
                 "VALUES ("+courseUser.getCourseId()+",'"+courseUser.getUserId()+"')";
