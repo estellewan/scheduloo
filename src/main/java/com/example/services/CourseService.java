@@ -1,5 +1,6 @@
 package com.example.services;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,11 +22,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.example.models.Course;
@@ -152,6 +155,15 @@ public class CourseService {
                 end_time = sdf.parse(date.getString("end_time"));
             }
 
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (org.apache.http.ParseException e) {
+            e.printStackTrace();
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("There's was an error in getting the class details, please try again later.");
@@ -235,7 +247,7 @@ public class CourseService {
         return arr;
     }
 
-    private JSONObject getJSONFromAPIUrlAsJSONObject(String url) throws Exception {
+    private JSONObject getJSONFromAPIUrlAsJSONObject(String url) throws ClientProtocolException, IOException, org.apache.http.ParseException, JSONException {
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse responseGet = client.execute(new HttpGet(url));
         HttpEntity resEntityGet = responseGet.getEntity();
