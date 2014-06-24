@@ -102,7 +102,7 @@ public class CourseService {
         if (count > 0) {
             stmt.close();
             connection.close();
-            throw new SQLException();
+            throw new SQLException("Course has already been added!");
         }
 
         String msql = "INSERT INTO course_user "+
