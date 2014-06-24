@@ -12,6 +12,7 @@ public class Course {
     private String subject_code;
     private String subject_catalog;
     private String section;
+    private String weekdays;
 
     public Course() {}
     public Course(int id, String subject_code, String subject_catalog, String section) {
@@ -37,6 +38,10 @@ public class Course {
         return section;
     }
     
+    public String getWeekdays() {
+        return weekdays;
+    }
+    
     public void setId(int id) {
         this.id = id;
     }
@@ -51,5 +56,9 @@ public class Course {
     
     public void setSection(String section) {
         this.section = section;
+    }
+    
+    public void setWeekdays(String weekdays) {
+        this.weekdays = weekdays;
     }
 }

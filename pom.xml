@@ -52,6 +52,11 @@
 		    <version>5.0.8</version>
 		    <scope>compile</scope>
 		</dependency> 
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.4</version>
+		</dependency>
     </dependencies>
 
     <build>
