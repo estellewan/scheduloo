@@ -10,7 +10,8 @@ First build with:
 
 Then run it with:
 
-    $ java -cp target/classes:target/dependency/* com.example.Main
+    $ set PORT=5000
+    $ java -cp target\classes;"target\dependency\*" com.example.Main
 
 ## Sample Test
 
