@@ -175,7 +175,8 @@ public class CourseService {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("There's was an error in getting the class details, please try again later.");
+            throw e;
+            //throw new Exception("There's was an error in getting the class details, please try again later.");
         }
         
         rs = stmt.executeQuery("SELECT * FROM course_user AS cu JOIN courses AS c ON c.id = cu.course_id WHERE user_id="+user_id);
@@ -258,49 +259,6 @@ public class CourseService {
 
     @SuppressWarnings("deprecation")
     private JSONObject getJSONFromAPIUrlAsJSONObject(String url) throws ClientProtocolException, IOException, org.apache.http.ParseException, JSONException {
-        
-        X509TrustManager tm = new X509TrustManager() {
-            public
-            X509Certificate[] getAcceptedIssuers() {
-             return null;
-            }
-            public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-              throws CertificateException {
-             // TODO Auto-generated method stub
-            
-            }
-            public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-              throws CertificateException {
-             // TODO Auto-generated method stub
-            
-            }
-           };
-           SSLContext ctx;
-          
-          
-            int port = 443;
-           
-            //Protocol https = new Protocol("https", new AuthSSLProtocolSocketFactory(), port);
-            //
-            //Protocol https = new Protocol("https", new MySocketFactory(), port);
-            //new EasySSLProtocolSocketFactory();
-            Protocol https = new Protocol("https", new AuthSSLProtocolSocketFactory(), port);
-           
-            Protocol.registerProtocol("https", https);
-           
-            try {
-             ctx = SSLContext.getInstance("SSL");
-             ctx.init(null, new TrustManager[] { tm }, null);
-             SSLContext.setDefault(ctx);
-            } catch (NoSuchAlgorithmException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-            } catch (KeyManagementException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-            }
-        
-        //Protocol myhttps = new Protocol("https", new SecureProtocolSocketFactory(), 443);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse responseGet = client.execute(new HttpGet(url));
         HttpEntity resEntityGet = responseGet.getEntity();
