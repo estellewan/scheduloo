@@ -2,6 +2,10 @@ package com.example.services;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -12,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,6 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -31,6 +39,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.example.models.AuthSSLProtocolSocketFactory;
 import com.example.models.Course;
 import com.example.models.CourseUser;
 
@@ -247,7 +256,51 @@ public class CourseService {
         return arr;
     }
 
+    @SuppressWarnings("deprecation")
     private JSONObject getJSONFromAPIUrlAsJSONObject(String url) throws ClientProtocolException, IOException, org.apache.http.ParseException, JSONException {
+        
+        X509TrustManager tm = new X509TrustManager() {
+            public
+            X509Certificate[] getAcceptedIssuers() {
+             return null;
+            }
+            public void checkClientTrusted(X509Certificate[] arg0, String arg1)
+              throws CertificateException {
+             // TODO Auto-generated method stub
+            
+            }
+            public void checkServerTrusted(X509Certificate[] arg0, String arg1)
+              throws CertificateException {
+             // TODO Auto-generated method stub
+            
+            }
+           };
+           SSLContext ctx;
+          
+          
+            int port = 443;
+           
+            //Protocol https = new Protocol("https", new AuthSSLProtocolSocketFactory(), port);
+            //
+            //Protocol https = new Protocol("https", new MySocketFactory(), port);
+            //new EasySSLProtocolSocketFactory();
+            Protocol https = new Protocol("https", new AuthSSLProtocolSocketFactory(), port);
+           
+            Protocol.registerProtocol("https", https);
+           
+            try {
+             ctx = SSLContext.getInstance("SSL");
+             ctx.init(null, new TrustManager[] { tm }, null);
+             SSLContext.setDefault(ctx);
+            } catch (NoSuchAlgorithmException e) {
+             // TODO Auto-generated catch block
+             e.printStackTrace();
+            } catch (KeyManagementException e) {
+             // TODO Auto-generated catch block
+             e.printStackTrace();
+            }
+        
+        //Protocol myhttps = new Protocol("https", new SecureProtocolSocketFactory(), 443);
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse responseGet = client.execute(new HttpGet(url));
         HttpEntity resEntityGet = responseGet.getEntity();
