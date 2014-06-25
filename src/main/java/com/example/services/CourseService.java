@@ -148,7 +148,7 @@ public class CourseService {
         
         // Get class details from UWaterloo Open API
         try {
-            classDetail = getJSONFromAPIUrlAsJSONObject("https://api.uwaterloo.ca/v2/courses/" +
+            classDetail = getJSONFromAPIUrlAsJSONObject("http://api.uwaterloo.ca/v2/courses/" +
                     course_id + "/schedule.json?key="+API_KEY+"&output=json").getJSONArray("data").getJSONObject(0);
             
             classes = classDetail.getJSONArray("classes");
