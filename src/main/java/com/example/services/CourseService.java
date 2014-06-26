@@ -34,6 +34,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.example.models.Course;
+import com.example.models.CourseDate;
 import com.example.models.CourseUser;
 
 @Path("/course")
@@ -80,49 +81,94 @@ public class CourseService {
      * @throws ParseException 
      */
     @GET
-    @Path("/{user_id}/{search_date}")
+    @Path("/{user_id}/{search_date}/{n}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<Course> getCourseByUser(@PathParam("user_id") String user_id, @PathParam("search_date") String search_date) throws ClassNotFoundException, SQLException, URISyntaxException, ParseException {
+    public ArrayList<CourseDate> getCourseByUser(@PathParam("user_id") String user_id, @PathParam("search_date") String search_date, @PathParam("n") String n) throws ClassNotFoundException, SQLException, URISyntaxException, ParseException {
+        
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        
         Connection connection = getConnection();
         
         Statement stmt = connection.createStatement();
 
         ResultSet rs = stmt.executeQuery("SELECT * FROM course_user AS cu JOIN courses AS c ON c.id = cu.course_id WHERE user_id="+user_id);
         
+        ArrayList<Course> courseListWithoutFilter = new ArrayList<Course>();
+        ArrayList<CourseDate> courseDatesList = new ArrayList<CourseDate>();
+        
+        while (rs.next()) {
+            Course course = new Course();
+            course.setId(rs.getInt("course_id"));
+            course.setSubjectCode(rs.getString("subject_code"));
+            course.setSubjectCatalog(rs.getString("subject_catalog"));
+            course.setSection(rs.getString("section"));
+            course.setWeekdays(rs.getString("weekday"));
+            course.setStartTime(rs.getString("start_time"));
+            course.setEndTime(rs.getString("end_time"));
+            courseListWithoutFilter.add(course);
+        }
+        
+        // Get Calendar object for date
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(df.parse(search_date));
+        
+        for (int i = 0; i < Integer.parseInt(n); i++) {
+            // Get date we want
+            Calendar curCal = (Calendar) startCal.clone();
+            curCal.add(Calendar.DATE, i);
+            
+            // Get date we want in String format
+            String dateWeWant = df.format(curCal.getTime());
+            
+            // Get list of all courses for day we want
+            ArrayList<Course> courseList = getCourseListForDay(dateWeWant, courseListWithoutFilter);
+            
+            // Init CourseDate
+            CourseDate courseDate = new CourseDate();
+            courseDate.setDate(dateWeWant);
+            courseDate.setCourses(courseList);
+            
+            courseDatesList.add(courseDate);
+        }      
+        
+
+        rs.close();
+        stmt.close();
+        connection.close();
+        
+        return courseDatesList;
+    }
+    
+    private ArrayList<Course> getCourseListForDay(String search_date, ArrayList<Course> courseListWithoutFilter) throws ParseException, SQLException {
         ArrayList<Course> courseList = new ArrayList<Course>();
         
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dfpost.parse(search_date));
         
-        while (rs.next()) {
+        for (int i = 0; i < courseListWithoutFilter.size(); i++) {
             
-            ArrayList<String> weekdays = splitDays(rs.getString("weekday"));
+            ArrayList<String> weekdays = splitDays(courseListWithoutFilter.get(i).getWeekdays());
             
             if (weekdays.size() == 0) {
                 // TODO Dates given instead. Labs held on biweekly basis for instance
             } else {
                 if (weekdays.contains(daysofEntireWeek[calendar.get(Calendar.DAY_OF_WEEK)-1])) {
                     Course course = new Course();
-                    course.setId(rs.getInt("course_id"));
-                    course.setSubjectCode(rs.getString("subject_code"));
-                    course.setSubjectCatalog(rs.getString("subject_catalog"));
-                    course.setSection(rs.getString("section"));
-                    course.setWeekdays(rs.getString("weekday"));
-                    course.setStartTime(rs.getString("start_time"));
-                    course.setEndTime(rs.getString("end_time"));
+                    course.setId(courseListWithoutFilter.get(i).getId());
+                    course.setSubjectCode(courseListWithoutFilter.get(i).getSubjectCode());
+                    course.setSubjectCatalog(courseListWithoutFilter.get(i).getSubjectCatalog());
+                    course.setSection(courseListWithoutFilter.get(i).getSection());
+                    course.setWeekdays(courseListWithoutFilter.get(i).getWeekdays());
+                    course.setStartTime(courseListWithoutFilter.get(i).getStartTime());
+                    course.setEndTime(courseListWithoutFilter.get(i).getEndTime());
                     courseList.add(course);
                 }
             }
             
         }
-        
-        rs.close();
-        stmt.close();
-        connection.close();
-        
         return courseList;
     }
-    
+
     /**
      * Saves a course associated with a particular user
      * @param courseUser
