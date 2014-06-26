@@ -2,23 +2,18 @@ package com.example.services;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -27,7 +22,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -39,7 +33,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.example.models.AuthSSLProtocolSocketFactory;
 import com.example.models.Course;
 import com.example.models.CourseUser;
 
@@ -78,24 +71,49 @@ public class CourseService {
         return courseList;
     }
     
+    private String[] daysofEntireWeek = {"S", "M", "T", "W", "Th", "F","Sa"};
+    DateFormat dfpost = new SimpleDateFormat("yyyy-MM-dd");
+    
     /**
      * @param user_id
      * @return list of class ids enrolled in by user_id
+     * @throws ParseException 
      */
     @GET
-    @Path("/{user_id}")
+    @Path("/{user_id}/{search_date}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<Integer> getCourseByUser(@PathParam("user_id") String user_id) throws ClassNotFoundException, SQLException, URISyntaxException {
+    public ArrayList<Course> getCourseByUser(@PathParam("user_id") String user_id, @PathParam("search_date") String search_date) throws ClassNotFoundException, SQLException, URISyntaxException, ParseException {
         Connection connection = getConnection();
         
         Statement stmt = connection.createStatement();
 
-        ResultSet rs = stmt.executeQuery("SELECT * FROM course_user WHERE user_id="+user_id);
+        ResultSet rs = stmt.executeQuery("SELECT * FROM course_user AS cu JOIN courses AS c ON c.id = cu.course_id WHERE user_id="+user_id);
         
-        ArrayList<Integer> courseList = new ArrayList<Integer>();
+        ArrayList<Course> courseList = new ArrayList<Course>();
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dfpost.parse(search_date));
         
         while (rs.next()) {
-            courseList.add(rs.getInt("course_id"));
+            
+            ArrayList<String> weekdays = splitDays(rs.getString("weekday"));
+            
+            if (weekdays.size() == 0) {
+                // TODO Dates given instead. Labs held on biweekly basis for instance
+            } else {
+                if (weekdays.contains(daysofEntireWeek[calendar.get(Calendar.DAY_OF_WEEK)-1])) {
+                    Course course = new Course();
+                    course.setId(rs.getInt("course_id"));
+                    course.setSubjectCode(rs.getString("subject_code"));
+                    course.setSubjectCatalog(rs.getString("subject_catalog"));
+                    course.setSection(rs.getString("section"));
+                    course.setWeekdays(rs.getString("weekday"));
+                    course.setStartTime(rs.getString("start_time"));
+                    course.setEndTime(rs.getString("end_time"));
+                    courseList.add(course);
+                }
+            }
+            
         }
         
         rs.close();
@@ -175,8 +193,7 @@ public class CourseService {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
-            //throw new Exception("There's was an error in getting the class details, please try again later.");
+            throw new Exception("There's was an error in getting the class details, please try again later.");
         }
         
         rs = stmt.executeQuery("SELECT * FROM course_user AS cu JOIN courses AS c ON c.id = cu.course_id WHERE user_id="+user_id);
@@ -257,7 +274,6 @@ public class CourseService {
         return arr;
     }
 
-    @SuppressWarnings("deprecation")
     private JSONObject getJSONFromAPIUrlAsJSONObject(String url) throws ClientProtocolException, IOException, org.apache.http.ParseException, JSONException {
         HttpClient client = HttpClientBuilder.create().build();
         HttpResponse responseGet = client.execute(new HttpGet(url));

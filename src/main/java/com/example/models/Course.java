@@ -13,6 +13,8 @@ public class Course {
     private String subject_catalog;
     private String section;
     private String weekdays;
+    private String start_time;
+    private String end_time;
 
     public Course() {}
     public Course(int id, String subject_code, String subject_catalog, String section) {
@@ -60,5 +62,17 @@ public class Course {
     
     public void setWeekdays(String weekdays) {
         this.weekdays = weekdays;
+    }
+    public String getStartTime() {
+        return start_time;
+    }
+    public void setStartTime(String startTime) {
+        this.start_time = startTime;
+    }
+    public String getEndTime() {
+        return end_time;
+    }
+    public void setEndTime(String endTime) {
+        this.end_time = endTime;
     }
 }
