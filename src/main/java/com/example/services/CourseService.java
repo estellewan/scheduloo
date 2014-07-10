@@ -121,7 +121,7 @@ public class CourseService {
             String dateWeWant = df.format(curCal.getTime());
             
             // Get list of all courses for day we want
-            ArrayList<Course> courseList = getCourseListForDay(dateWeWant, courseListWithoutFilter);
+            ArrayList<Course> courseList = getCourseListForDay(dateWeWant, courseListWithoutFilter, connection);
             
             // Init CourseDate
             CourseDate courseDate = new CourseDate();
@@ -139,7 +139,7 @@ public class CourseService {
         return courseDatesList;
     }
     
-    private ArrayList<Course> getCourseListForDay(String search_date, ArrayList<Course> courseListWithoutFilter) throws ParseException, SQLException {
+    private ArrayList<Course> getCourseListForDay(String search_date, ArrayList<Course> courseListWithoutFilter, Connection connection) throws ParseException, SQLException {
         ArrayList<Course> courseList = new ArrayList<Course>();
         
         Calendar calendar = Calendar.getInstance();
@@ -161,12 +161,30 @@ public class CourseService {
                     course.setWeekdays(courseListWithoutFilter.get(i).getWeekdays());
                     course.setStartTime(courseListWithoutFilter.get(i).getStartTime());
                     course.setEndTime(courseListWithoutFilter.get(i).getEndTime());
+                    course.setUserList(getUserListFromCourseId(courseListWithoutFilter.get(i).getId(), connection));
                     courseList.add(course);
                 }
             }
             
         }
         return courseList;
+    }
+
+    private ArrayList<Integer> getUserListFromCourseId(int course_id, Connection connection) throws SQLException {
+        
+        ArrayList<Integer>userIds = new ArrayList<Integer>();
+        Statement stmt = connection.createStatement();
+
+        ResultSet rs = stmt.executeQuery("SELECT * FROM course_user WHERE course_id="+course_id);
+        
+        while (rs.next()) {
+            userIds.add(rs.getInt("user_id"));
+        }
+        
+        rs.close();
+        stmt.close();
+        
+        return userIds;
     }
 
     /**

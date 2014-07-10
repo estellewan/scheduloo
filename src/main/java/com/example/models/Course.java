@@ -1,5 +1,7 @@
 package com.example.models;
 
+import java.util.ArrayList;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -15,8 +17,10 @@ public class Course {
     private String weekdays;
     private String start_time;
     private String end_time;
+    private ArrayList<Integer> userList;
 
     public Course() {}
+    
     public Course(int id, String subject_code, String subject_catalog, String section) {
     	this.id = id;
         this.subject_code = subject_code;
@@ -74,5 +78,11 @@ public class Course {
     }
     public void setEndTime(String endTime) {
         this.end_time = endTime;
+    }
+    public ArrayList<Integer> getUserList() {
+        return userList;
+    }
+    public void setUserList(ArrayList<Integer>userList) {
+        this.userList = userList;
     }
 }
