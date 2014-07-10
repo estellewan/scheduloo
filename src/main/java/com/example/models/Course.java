@@ -17,7 +17,7 @@ public class Course {
     private String weekdays;
     private String start_time;
     private String end_time;
-    private ArrayList<Integer> userList;
+    private ArrayList<Long> userList;
 
     public Course() {}
     
@@ -79,10 +79,10 @@ public class Course {
     public void setEndTime(String endTime) {
         this.end_time = endTime;
     }
-    public ArrayList<Integer> getUserList() {
+    public ArrayList<Long> getUserList() {
         return userList;
     }
-    public void setUserList(ArrayList<Integer>userList) {
+    public void setUserList(ArrayList<Long>userList) {
         this.userList = userList;
     }
 }

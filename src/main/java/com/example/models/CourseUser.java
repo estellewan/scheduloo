@@ -10,10 +10,10 @@ public class CourseUser {
 
     private int id;
     private int course_id;
-    private int user_id;
+    private long user_id;
 
     public CourseUser() {}
-    public CourseUser(int course_id, int user_id) {
+    public CourseUser(int course_id, long user_id) {
         this.course_id = course_id;
         this.user_id = user_id;
     }
@@ -26,7 +26,7 @@ public class CourseUser {
         return course_id;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return user_id;
     }
     
@@ -38,7 +38,7 @@ public class CourseUser {
         this.course_id = course_id;
     }
 
-    public void setUserId(int user_id) {
+    public void setUserId(long user_id) {
         this.user_id = user_id;
     }
 }

@@ -170,15 +170,15 @@ public class CourseService {
         return courseList;
     }
 
-    private ArrayList<Integer> getUserListFromCourseId(int course_id, Connection connection) throws SQLException {
+    private ArrayList<Long> getUserListFromCourseId(int course_id, Connection connection) throws SQLException {
         
-        ArrayList<Integer>userIds = new ArrayList<Integer>();
+        ArrayList<Long>userIds = new ArrayList<Long>();
         Statement stmt = connection.createStatement();
 
         ResultSet rs = stmt.executeQuery("SELECT * FROM course_user WHERE course_id="+course_id);
         
         while (rs.next()) {
-            userIds.add(rs.getInt("user_id"));
+            userIds.add(rs.getLong("user_id"));
         }
         
         rs.close();
@@ -202,7 +202,7 @@ public class CourseService {
 
         int count = 0;
         int course_id = courseUser.getCourseId();
-        int user_id = courseUser.getUserId();
+        long user_id = courseUser.getUserId();
                 
         // DUPLICATE - Check if we are adding a class which has already been added
         ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS rowcount FROM course_user "+
