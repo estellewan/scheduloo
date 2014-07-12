@@ -50,6 +50,8 @@ public class CourseService {
             "user=cs446&password=estellay");
     }
 	
+    
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<Course> get() throws ClassNotFoundException, SQLException, URISyntaxException {
@@ -187,6 +189,22 @@ public class CourseService {
         return userIds;
     }
 
+    @POST
+    @Path("/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void deleteCourseWithUser(CourseUser courseUser) throws Exception {
+        Connection connection = getConnection();
+        
+        Statement stmt = connection.createStatement();
+        
+        String msql = "DELETE FROM course_user WHERE course_id="+courseUser.getCourseId()+" AND "+
+                "user_id="+courseUser.getUserId();
+        stmt.executeUpdate(msql);
+        
+        stmt.close();
+        connection.close();
+    }
+    
     /**
      * Saves a course associated with a particular user
      * @param courseUser
