@@ -1,5 +1,7 @@
 package com.example.models;
 
+import java.util.ArrayList;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -9,14 +11,18 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class Event {
 
     private int id;
-    private String title;
+    private int event_id;
+    private String site;
     private String start_time;
     private String end_time;
+    private String start_date;
+    private String end_date;
+    private ArrayList<Long> userList;
 
     public Event() {}
-    public Event(int id, String title) {
+    public Event(int id, String site) {
     	this.id = id;
-        this.setTitle(title);
+        this.setSite(site);
     }
     
     public int getId() {
@@ -42,12 +48,35 @@ public class Event {
     public void setEndTime(String endTime) {
         this.end_time = endTime;
     }
-    
-    public String getTitle() {
-        return title;
+
+    public int getEventId() {
+        return event_id;
     }
-    
-    public void setTitle(String title) {
-        this.title = title;
+    public void setEventId(int event_id) {
+        this.event_id = event_id;
+    }
+    public String getSite() {
+        return site;
+    }
+    public void setSite(String site) {
+        this.site = site;
+    }
+    public String getStartDate() {
+        return start_date;
+    }
+    public void setStartDate(String start_date) {
+        this.start_date = start_date;
+    }
+    public String getEndDate() {
+        return end_date;
+    }
+    public void setEndDate(String end_date) {
+        this.end_date = end_date;
+    }
+    public ArrayList<Long> getUserList() {
+        return userList;
+    }
+    public void setUserList(ArrayList<Long>userList) {
+        this.userList = userList;
     }
 }

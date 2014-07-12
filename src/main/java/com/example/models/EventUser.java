@@ -10,10 +10,11 @@ public class EventUser {
 
     private int id;
     private int event_id;
-    private int user_id;
+    private long user_id;
+    private String event_site;
 
     public EventUser() {}
-    public EventUser(int event_id, int user_id) {
+    public EventUser(int event_id, long user_id) {
         this.setEventId(event_id);
         this.user_id = user_id;
     }
@@ -22,7 +23,7 @@ public class EventUser {
         return id;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return user_id;
     }
     
@@ -30,7 +31,7 @@ public class EventUser {
         this.id = id;
     }
 
-    public void setUserId(int user_id) {
+    public void setUserId(long user_id) {
         this.user_id = user_id;
     }
     public int getEventId() {
@@ -38,5 +39,11 @@ public class EventUser {
     }
     public void setEventId(int event_id) {
         this.event_id = event_id;
+    }
+    public String getEventSite() {
+        return event_site;
+    }
+    public void setEventSite(String event_site) {
+        this.event_site = event_site;
     }
 }

@@ -273,8 +273,8 @@ public class CourseService {
                 r_start = sdf.parse(rs.getString("start_time"));
                 r_end = sdf.parse(rs.getString("end_time"));
             } catch (ParseException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
+                throw e;
             }
             
             for (int j = 0; j < weekdays.size(); j++) {
