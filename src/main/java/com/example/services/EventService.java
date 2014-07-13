@@ -78,6 +78,7 @@ public class EventService {
             event.setEndDate(rs.getString("end_date"));
             event.setStartTime(rs.getString("start_time"));
             event.setEndTime(rs.getString("end_time"));
+            event.setName(rs.getString("name"));
             eventListWithoutFilter.add(event);
         }
         

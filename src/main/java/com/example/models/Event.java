@@ -13,6 +13,7 @@ public class Event {
     private int id;
     private int event_id;
     private String site;
+    private String name;
     private String start_time;
     private String end_time;
     private String start_date;
@@ -78,5 +79,11 @@ public class Event {
     }
     public void setUserList(ArrayList<Long>userList) {
         this.userList = userList;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }
