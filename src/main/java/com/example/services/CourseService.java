@@ -1,6 +1,7 @@
 package com.example.services;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -44,10 +45,13 @@ public class CourseService {
     protected String API_KEY = "801e2a06ff9686b4599da267caf86c7b";
    
     private static Connection getConnection() throws URISyntaxException, SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
-        return DriverManager.getConnection("jdbc:mysql://cs446.cpr3v5unvsxc.us-east-1.rds.amazonaws.com:3306/cs446?"+ 
-            "user=cs446&password=estellay");
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+
+        return DriverManager.getConnection(dbUrl, username, password);
     }
 	
     
